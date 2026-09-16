@@ -55,8 +55,7 @@ Independently verified several of Deepika's findings using pandas in Colab:
 ## Blockers
 - Teammate response pending
 - 2 of 4 team members yet to introduce themselves / confirm task assignments or GitHub usernames (needed to add as repo collaborators)
-- Fields Documentation.docx not included in data/raw — original dataset zip did not contain it; and its not even clickable for download. This has been sent as a complaint in the support portal but no response from cadetx till now. Resend access/link to field documentation. docx
-
+ 
 ## Next Sprint Focus
 - Finalize Week 1 submission (GitHub repo + CadetX portal link)
 - Begin KPI definition based on this week's findings (late payment rate, unpaid invoice rate, supplier delivery delays)
