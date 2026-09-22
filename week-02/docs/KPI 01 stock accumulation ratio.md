@@ -34,12 +34,19 @@ All 8 checks were run against the full stock_ledger dataset (237,230 rows, 2019-
 
 #	Check	Method	Result
 1	Missing values	.isnull().sum() on product_id, branch_id, movement_type, quantity	0 nulls found
+
 2	Zero-OUT edge case	Compared product-months with IN but no OUT	0 cases (lifetime and monthly)
+
 3	Zero-IN edge case	Compared product-months with OUT but no IN	0 cases (lifetime and monthly)
+
 4	Totals reconciliation	Row counts by movement_type vs. total table rows	Reconciled only after identifying a third category, ADJUSTMENT (see Data Quality Notes)
+
 5	Formula cross-check	groupby vs. pivot_table	Identical results, 0.0 difference
+
 6	Outlier check	max ÷ mean delivery size per product	Max delivery never more than ~1.9x average — no bulk-order outliers
+
 7	History length per product	min/max movement_date span per product	All 30 products span 2,205–2,219 days (~6 years), negligible variation
+
 8	Manual spot-check	Hand-verified 3 products spanning the full ratio range	P029 (17.42), P003 (18.11), P024 (19.22) — all confirmed correct by hand, each backed by 3,400+ to 4,300+ real transactions
 
 
