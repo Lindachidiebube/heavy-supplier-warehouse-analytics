@@ -1,6 +1,6 @@
 # Heavy Supplier, Inventory & Warehouse Analytics
 
-CadetX Virtual Internship project. This repository holds the weekly work for a 12-week analytics project on warehouse, inventory and supplier data.
+My CadetX Virtual Internship project, completed independently as a Data Analyst. This repository holds my weekly work for a 12-week analytics project on warehouse, inventory and supplier data.
 
 ## The business problem
 
