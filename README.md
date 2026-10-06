@@ -2,6 +2,12 @@
 
 My CadetX Virtual Internship project, completed independently as a Data Analyst. This repository holds my weekly work for a 12-week analytics project on warehouse, inventory and supplier data.
 
+## About me
+
+Hi, I'm **Chidiebube Linda**, a Data Analyst. I am carrying out this project on my own, from the first data check through KPIs, forecasting and dashboards to the final recommendations. The work so far uses Python, pandas, Google Colab, Google Drive and GitHub, with dbdiagram.io and Mermaid for the table diagrams.
+
+Connect with me on LinkedIn: [Chidiebube Linda](https://www.linkedin.com/in/chidiebube-linda-24185b224)
+
 ## The business problem
 
 Warehouses and supply-chain teams often operate reactively, relying on manual reports or intuition to manage inventory, storage and space. This leads to excess inventory, frequent stockouts, poor space usage and delayed decisions.
