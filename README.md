@@ -35,7 +35,7 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 1 | Dataset profiling, integrity checks, ERD, current stock investigation | Done |
 | 2 | First four KPIs, built and fully verified | Done |
 | 3 | KPI proposal, key-uniqueness checks on all ID columns, data cleaning log, table join map, KPI 5, feature list, data dictionary | Done |
-| 4 | Stock balance reconstruction and dead stock identification (KPIs 8 and 6) | Next |
+| 4 | Stock balance reconstruction and dead stock identification (KPIs 8 and 6) | Done |
 | 5 to 12 | Product, inventory and warehouse analytics; supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
@@ -93,10 +93,27 @@ Notebooks:
 
 The Week 3 results add a fourth strand to the earlier picture: stock arrives far faster than it sells (KPI 1), and buying does not follow selling, either by product or by branch (KPI 5).
 
+## Week 4: Stock balance and dead stock
+
+Week 4 started Phase 2 (inventory health). KPI 8 rebuilt how much stock each product really holds in each branch, and KPI 6 used that stock to test for dead stock.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 8 | Reconstructed Stock Balance | Rebuilding stock from the order lines gives 21,185,215 units across the 180 product-branch pairs. That is 1,879,221 units (about 9.7%) more than the stock ledger shows, and the gap is fully explained by order lines missing from the ledger and ledger rows from cancelled orders. Every pair holds at least 177 times its maximum stock level. | [KPI 08](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/docs/KPI%2008%20Reconstructed%20Stock%20Balance.md) |
+| 6 | Dead Stock Identification | No pair passes the classic dead stock tests: every pair sold within 27 days of the end of the sales data, and the slowest pair still sold 703 units in 12 months. Ranked by years of cover, every pair holds 72 to 172 years of stock at its current selling rate. Hyderabad has the highest cover because it sells the least, not because it holds more stock. | [KPI 06](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/docs/KPI%2006%20Dead%20Stock%20Identification.md) |
+
+Sprint notes: [sprint-04-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/sprint_notes/sprint-04-notes.md)
+
+Notebooks:
+- [Week4_KPI08_Reconstructed_Stock_Balance.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4_KPI08_Reconstructed_Stock_Balance.ipynb)
+- [Week4_KPI06_Dead_Stock_Identification.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4_KPI06_Dead_Stock_Identification.ipynb)
+
+The Week 4 results add a fifth strand: the stock on record is not the real stock level, and the real level is far above what each branch should hold (KPI 8). That excess is spread across every pair, so there is no small group of dead products to clear out (KPI 6).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
-- The current stock field in the inventory table is unreliable, so stock movements are calculated from the stock ledger instead.
+- The current stock field in the inventory table is inflated, but Week 4 showed it matches the stock ledger for 166 of 180 product-branch pairs. The ledger itself is about 10% short of the order lines, so reconstructed stock (KPI 8) is calculated from the order lines, with the ledger-based figure shown beside it.
 - About 10% of order lines never reached the stock ledger, so Delivered sales lines and Received purchase lines are the source for demand and purchases. Cancelled orders keep their lines in the lines tables and are filtered out by order status.
 - ADJUSTMENT rows in the stock ledger stay out of KPI 1 and are used with their direction in the stock balance reconstruction (KPI 8).
 - Master-table summary columns that do not match the transactions (customer purchase dates and totals, product last purchase date and lead time) are not used. Margin is recomputed from unit price and unit cost. Text columns such as warehouse capacity and all dates are converted before use.
