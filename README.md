@@ -105,8 +105,8 @@ Week 4 started Phase 2 (inventory health). KPI 8 rebuilt how much stock each pro
 Sprint notes: [sprint-04-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/sprint_notes/sprint-04-notes.md)
 
 Notebooks:
-- [Week4_KPI08_Reconstructed_Stock_Balance.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4_KPI08_Reconstructed_Stock_Balance.ipynb)
-- [Week4_KPI06_Dead_Stock_Identification.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4_KPI06_Dead_Stock_Identification.ipynb)
+- [Week4 KPI NO8 Reconstructed Stock Balance.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4%20KPI%20NO8%20Reconstructed%20Stock%20Balance.ipynb)
+- [Week4 KPI NO6 Dead Stock Identification.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-04/notebooks/Week4%20KPI%20NO6%20Dead%20Stock%20Identification.ipynb)
 
 The Week 4 results add a fifth strand: the stock on record is not the real stock level, and the real level is far above what each branch should hold (KPI 8). That excess is spread across every pair, so there is no small group of dead products to clear out (KPI 6).
 
