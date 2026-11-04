@@ -36,7 +36,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 2 | First four KPIs, built and fully verified | Done |
 | 3 | KPI proposal, key-uniqueness checks on all ID columns, data cleaning log, table join map, KPI 5, feature list, data dictionary | Done |
 | 4 | Stock balance reconstruction and dead stock identification (KPIs 8 and 6) | Done |
-| 5 to 12 | Product, inventory and warehouse analytics; supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 5 | ABC/Pareto classification and inventory turnover (KPIs 7 and 9) | Done |
+| 6 to 12 | Warehouse analytics; supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -110,6 +111,23 @@ Notebooks:
 
 The Week 4 results add a fifth strand: the stock on record is not the real stock level, and the real level is far above what each branch should hold (KPI 8). That excess is spread across every pair, so there is no small group of dead products to clear out (KPI 6).
 
+## Week 5: Revenue classes and inventory turnover
+
+Week 5 continued Phase 2 (inventory health). KPI 7 ranked the products by the revenue they bring in, and KPI 9 measured how fast the stock turns over.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 7 | ABC/Pareto Classification | 10 of the 30 products (class A) bring 81.53% of revenue (22,958,987,430 before GST), 7 (class B) bring 14.07% and 13 (class C) bring 4.40%. Every product sells about the same number of units (39,486 to 42,702), so revenue follows the price tier: list prices run from 310 to 119,000. The classes are almost the same in every year and every branch (only two swaps each) and do not change if cancelled orders or GST are counted or the largest lines are removed. | [KPI 07](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-05/docs/KPI%2007%20ABC%20Pareto%20Classification.md) |
+| 9 | Inventory Turnover Rate | Turnover fell about 11 times, from 0.114 in 2019 to 0.0102 in 2024, because stock grew from 32,969 to 21,185,215 units while sales stayed at about 200,000 units a year. At the 2024 speed the average stock would last about 98 years. All 180 product-branch pairs and all 30 products are slower in 2024 than in 2019, and the branch gap comes from sales (Hyderabad slowest, Chennai and Kolkata fastest), not from stock. | [KPI 09](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-05/docs/KPI%2009%20Inventory%20Turnover%20Rate.md) |
+
+Sprint notes: [sprint-05-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-05/sprint_notes/sprint-05-notes.md)
+
+Notebooks:
+- [Week5 KPI N07 ABC Pareto Classification.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-05/notebooks/Week5%20KPI%20N07%20ABC%20Pareto%20Classification.ipynb)
+- [Week5 KPI N09 Inventory Turnover Rate.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-05/notebooks/Week5%20KPI%20N09%20Inventory%20Turnover%20Rate.ipynb)
+
+The Week 5 results add a sixth strand: revenue is concentrated in 10 high-price products (KPI 7), and stock turns over more slowly every year because it keeps arriving far faster than it sells (KPI 9).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -117,6 +135,7 @@ The Week 4 results add a fifth strand: the stock on record is not the real stock
 - About 10% of order lines never reached the stock ledger, so Delivered sales lines and Received purchase lines are the source for demand and purchases. Cancelled orders keep their lines in the lines tables and are filtered out by order status.
 - ADJUSTMENT rows in the stock ledger stay out of KPI 1 and are used with their direction in the stock balance reconstruction (KPI 8).
 - Master-table summary columns that do not match the transactions (customer purchase dates and totals, product last purchase date and lead time) are not used. Margin is recomputed from unit price and unit cost. Text columns such as warehouse capacity and all dates are converted before use.
+- - Revenue (KPI 7) is counted before GST and from Delivered sales lines only. Inventory turnover (KPI 9) uses the order-line stock from KPI 8, with the ledger-based figure shown beside it, and the weighted average cost paid on Received purchase lines, because the products-table cost differs from the purchase cost on 155,492 of 155,495 lines.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
