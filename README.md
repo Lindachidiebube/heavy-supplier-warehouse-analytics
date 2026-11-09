@@ -37,7 +37,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 3 | KPI proposal, key-uniqueness checks on all ID columns, data cleaning log, table join map, KPI 5, feature list, data dictionary | Done |
 | 4 | Stock balance reconstruction and dead stock identification (KPIs 8 and 6) | Done |
 | 5 | ABC/Pareto classification and inventory turnover (KPIs 7 and 9) | Done |
-| 6 to 12 | Warehouse analytics; supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 6 | Excess stock, warehouse throughput and warehouse space (KPIs 10, 11 and 12) | Done |
+| 7 to 12 | Supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -128,6 +129,25 @@ Notebooks:
 
 The Week 5 results add a sixth strand: revenue is concentrated in 10 high-price products (KPI 7), and stock turns over more slowly every year because it keeps arriving far faster than it sells (KPI 9).
 
+## Week 6: Excess stock, warehouse throughput and warehouse space
+
+Week 6 continued Phase 2 (inventory health and warehouse analytics). KPI 10 measured how much of the stock is not needed, KPI 11 measured how much each branch warehouse moves, and KPI 12 compared the stock with the space available.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 10 | Capital Tied Up in Excess Stock | 21,135,890 of the 21,185,215 units in stock (99.77%) are more than 3 months of sales. At the cost paid per unit, 294,576,746,335 is tied up in excess stock, which is 94.41% of everything spent on received purchases. Five other rules for needed stock give 99.07% to 99.92% excess, so the finding does not depend on the rule. Two products (Engine Block and Transmission Assembly) make 36.38% of the excess value, and the excess grows by about 49 billion a year, from 46.5 billion (end of 2019) to 291.8 billion (end of 2024). | [KPI 10](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/docs/KPI%2010%20Capital%20Tied%20Up%20in%20Excess%20Stock.md) |
+| 11 | Warehouse Throughput | Units received are 94.77% of all units moved, so received and delivered units are reported separately. Average monthly units delivered run from 2,339 (Hyderabad) to 3,522 (Chennai), about 1.5 times apart, while average monthly units received are almost equal in every branch (50,355 to 52,296). Per employee, Kolkata handles the most and Delhi the least (65.3 against 27.9 units delivered a month). | [KPI 11](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/docs/KPI%2011%20Warehouse%20Throughput.md) |
+| 12 | Warehouse Space Utilisation | Kolkata holds 115.0 units per square foot of warehouse and Delhi 79.5, so the most crowded branch holds 1.45 times more. The order is the same at every year end from 2019 to 2024. The gap comes from warehouse size (1.51 times apart), not from stock (1.047 times apart). Every branch is about 6 times denser than in 2019 because stock grows 3.4 to 3.6 million units a year. A volume view of the stock gives the same order. | [KPI 12](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/docs/KPI%2012%20Warehouse%20Space%20Utilisation.md) |
+
+Sprint notes: [sprint-06-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/sprint_notes/sprint-06-notes.md)
+
+Notebooks:
+- [Week6 KPI 10 Capital Tied Up in Excess Stock.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/notebooks/Week6%20KPI%2010%20Capital%20Tied%20Up%20in%20Excess%20Stock.ipynb)
+- [Week6 KPI 11 Warehouse Throughput.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/notebooks/Week6%20KPI%2011%20Warehouse%20Throughput.ipynb)
+- [Week6 KPI 12 Warehouse Space Utilisation.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-06/notebooks/Week6%20KPI%2012%20Warehouse%20Space%20Utilisation.ipynb)
+
+The Week 6 results add a seventh strand: almost all of the stock is more than the business needs (KPI 10), the branches receive almost equal amounts but deliver different amounts (KPI 11), and the same stock sits in warehouses of different sizes, so the smallest warehouses are the most crowded (KPI 12).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -135,7 +155,9 @@ The Week 5 results add a sixth strand: revenue is concentrated in 10 high-price 
 - About 10% of order lines never reached the stock ledger, so Delivered sales lines and Received purchase lines are the source for demand and purchases. Cancelled orders keep their lines in the lines tables and are filtered out by order status.
 - ADJUSTMENT rows in the stock ledger stay out of KPI 1 and are used with their direction in the stock balance reconstruction (KPI 8).
 - Master-table summary columns that do not match the transactions (customer purchase dates and totals, product last purchase date and lead time) are not used. Margin is recomputed from unit price and unit cost. Text columns such as warehouse capacity and all dates are converted before use.
-- - Revenue (KPI 7) is counted before GST and from Delivered sales lines only. Inventory turnover (KPI 9) uses the order-line stock from KPI 8, with the ledger-based figure shown beside it, and the weighted average cost paid on Received purchase lines, because the products-table cost differs from the purchase cost on 155,492 of 155,495 lines.
+- Revenue (KPI 7) is counted before GST and from Delivered sales lines only. Inventory turnover (KPI 9) uses the order-line stock from KPI 8, with the ledger-based figure shown beside it, and the weighted average cost paid on Received purchase lines, because the products-table cost differs from the purchase cost on 155,492 of 155,495 lines.
+- Warehouse size (KPI 12) is read from text such as "45230 sqft" and, like the staff numbers used in KPI 11, is one current value per branch, so the same size is used for every past year. The size of sets and cartridges cannot be confirmed from the data, so the volume view of the stock is a comparison only.
+- Excess stock (KPI 10) is measured on the order-line stock with needed stock set at 3 months of sales per product and branch, and the ledger-based stock and five other rules are shown as tests. In 2025, 135 of the 1,586 counted order lines have no stock ledger row and 15 ledger rows belong to cancelled orders, which is why the ledger is not used as the stock source.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
