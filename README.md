@@ -38,7 +38,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 4 | Stock balance reconstruction and dead stock identification (KPIs 8 and 6) | Done |
 | 5 | ABC/Pareto classification and inventory turnover (KPIs 7 and 9) | Done |
 | 6 | Excess stock, warehouse throughput and warehouse space (KPIs 10, 11 and 12) | Done |
-| 7 to 12 | Supplier and customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 7 | Supplier lead time and reliability (KPI 13) | Done |
+| 8 to 12 | Customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -148,6 +149,21 @@ Notebooks:
 
 The Week 6 results add a seventh strand: almost all of the stock is more than the business needs (KPI 10), the branches receive almost equal amounts but deliver different amounts (KPI 11), and the same stock sits in warehouses of different sizes, so the smallest warehouses are the most crowded (KPI 12).
 
+## Week 7: Supplier lead time and reliability
+
+Week 7 started Phase 3 (supplier, customer and predictive analytics). KPI 13 measured how long each of the 8 suppliers really takes to deliver and how often it misses the promised delivery date.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 13 | Supplier Lead Time and Reliability | Of 21,630 Received purchase orders, 3,267 (15.10%) arrived after the promised date, 17,392 (80.41%) on the promised day and 971 (4.49%) early; a late order is 1 to 7 days late. All 8 suppliers are late about equally often (14.67% to 15.80%) and a test shows the differences are within chance (p-value 0.9702), so no supplier is really less reliable. The suppliers differ in how long they take: from 10.50 days (Qingdao) to 28.49 days (Tianjin). The promised days in the suppliers table are supported by the orders, but the stored reliability score is not: suppliers scored 5, 4 and 3 were late on 15.15%, 15.39% and 14.87% of orders. | [KPI 13](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-07/docs/KPI%2013%20Supplier%20Lead%20Time%20and%20Reliability.md) |
+
+Sprint notes: [sprint-07-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-07/sprint_notes/sprint-07-notes.md)
+
+Notebooks:
+- [Week7 KPI 13 Supplier Lead Time and Reliability.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-07/notebooks/Week7%20KPI%2013%20Supplier%20Lead%20Time%20and%20Reliability.ipynb)
+
+The Week 7 results add an eighth strand: the suppliers keep their promised delivery date equally well, about 85% of the time, and differ only in how long they take, so the real difference between suppliers is the length of the wait and not broken promises (KPI 13).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -158,6 +174,7 @@ The Week 6 results add a seventh strand: almost all of the stock is more than th
 - Revenue (KPI 7) is counted before GST and from Delivered sales lines only. Inventory turnover (KPI 9) uses the order-line stock from KPI 8, with the ledger-based figure shown beside it, and the weighted average cost paid on Received purchase lines, because the products-table cost differs from the purchase cost on 155,492 of 155,495 lines.
 - Warehouse size (KPI 12) is read from text such as "45230 sqft" and, like the staff numbers used in KPI 11, is one current value per branch, so the same size is used for every past year. The size of sets and cartridges cannot be confirmed from the data, so the volume view of the stock is a comparison only.
 - Excess stock (KPI 10) is measured on the order-line stock with needed stock set at 3 months of sales per product and branch, and the ledger-based stock and five other rules are shown as tests. In 2025, 135 of the 1,586 counted order lines have no stock ledger row and 15 ledger rows belong to cancelled orders, which is why the ledger is not used as the stock source.
+- Supplier lead time and reliability (KPI 13) use the 21,630 Received purchase orders only, because Cancelled orders have no received date. Real lead time and lateness are worked out from the order, promised and received dates. The promised days in the suppliers table are supported by the orders (the real wait is 0.49 to 0.55 days longer for every supplier), but the reliability score is not (suppliers scored 3, 4 and 5 are late equally often), so it is not used as a measure.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
