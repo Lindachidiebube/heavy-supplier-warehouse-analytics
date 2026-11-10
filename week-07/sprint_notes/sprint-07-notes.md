@@ -22,7 +22,7 @@
 - Ran all 8 verification checks: missing values (no blanks, every order matched to a supplier), impossible dates (none; smallest real wait 7 days), repeated orders (none), totals reconcile (all match), second method (largest difference 0.0), extreme orders (none; longest wait 1.23 to 1.62 times the average), history length (72 months for every supplier; at least 19 orders in any month) and a raw file check of Qingdao, Tianjin and Hangzhou (identical to the table).
 - Recommended planning orders with each supplier's real lead time and keeping a 7-day margin for the two slowest suppliers, Tianjin and Hangzhou.
 - Scope decision: Supplier Performance Comparison is included inside KPI 13. The other five Week 7 proposed tasks (Supplier Contribution Analysis, Supplier Dependency Risk Analysis, Critical Supplier Identification, Supplier Diversification Analysis and Warehouse Utilisation Benchmarking) are marked Not selected because they answer other questions.
-- Built in the notebook "Week7 KPI 13  Supplier Lead Time and Reliability" and written up in "KPI 13 Supplier Lead Time and Reliability.md".
+- Built in the notebook "Week7 KPI 13 Supplier Lead Time and Reliability" and written up in "KPI 13 Supplier Lead Time and Reliability.md".
 
 ## Blockers & Resolutions
 
