@@ -39,7 +39,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 5 | ABC/Pareto classification and inventory turnover (KPIs 7 and 9) | Done |
 | 6 | Excess stock, warehouse throughput and warehouse space (KPIs 10, 11 and 12) | Done |
 | 7 | Supplier lead time and reliability (KPI 13) | Done |
-| 8 to 12 | Customer analytics; forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 8 | Customer analytics: RFM segmentation, historical customer value, customer payment risk and churn by payment behavior (KPIs 14, 15, 16 and 17) | Done |
+| 9 to 12 | Forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -164,6 +165,27 @@ Notebooks:
 
 The Week 7 results add an eighth strand: the suppliers keep their promised delivery date equally well, about 85% of the time, and differ only in how long they take, so the real difference between suppliers is the length of the wait and not broken promises (KPI 13).
 
+## Week 8: Customer analytics
+
+Week 8 continued Phase 3 (supplier, customer and predictive analytics). KPI 14 sorted the customers into segments, KPI 15 measured how much money each customer has brought in, KPI 16 measured the money customers have not paid, and KPI 17 tested whether the customers who go quiet are the ones who pay badly.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 14 | RFM Segmentation | The 500 customers were scored on recency, frequency and money and sorted into six segments. 70 customers are At risk (valuable but quiet) and hold 16.8% of revenue. 67 customers are quiet for more than twice their own normal gap (13.13% of revenue), and a firm group of 21 stays At risk under every rule tested (5.07% of revenue). The Delhi branch is the one tested difference: 60.6% of its customers are high value against 41.4% overall (p-value 0.0015). Segments are a point-in-time view: 155 of 500 customers (31.0%) kept the same segment a year later. | [KPI 14](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/docs/KPI%2014%20RFM%20Segmentation.md) |
+| 15 | Historical Customer Value | Customer money (before GST, 22,958,987,430 in all) runs from 17,721,530 to 84,966,970, with an average of 45,917,975. Money is spread out: the top 10 customers hold 3.23%, the top 50 hold 14.33% and the top 100 hold 26.63%, against an even spread of 2%, 10% and 20%. Money per year is flat between 3.68 and 3.92 billion, and 2024 is the lowest year. | [KPI 15](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/docs/KPI%2015%20Historical%20Customer%20Value.md) |
+| 16 | Customer Payment Risk | Billed 28,599,637,860.60, paid 22,795,333,903.87 and outstanding 5,804,303,956.73, about 20.3% of billed money. The late share depends on the due period (78.57% late for 15-day invoices, 7.16% for 60-day invoices), customers pay at the same pace whatever the due period (median 34 to 36 days), and no customer or customer group stands out beyond luck. The 100 most valuable customers hold 26.03% of the outstanding money against 26.74% of the billing, so they are not riskier. 99.34% of the unpaid money is older than 90 days. | [KPI 16](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/docs/KPI%2016%20Customer%20Payment%20Risk.md) |
+| 17 | Churn by Payment Behavior | 67 of 500 customers (13.4%) are quiet (silent for more than twice their own normal gap), and all 23 customers whose last order is on or before 30 Jun 2024 are among them. No link was found between payment behaviour and going quiet: quiet customers paid 45.53% of invoices late against 44.90% for the others (p-value 0.9290), and bad payers are not more often quiet. 25 customers have been silent for more than 180 days, the longest for 359 days. | [KPI 17](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/docs/KPI%2017%20Churn%20by%20Payment%20Behavior.md) |
+
+Sprint notes: [sprint-08-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/sprint_notes/sprint-08-notes.md)
+
+Notebooks:
+- [Week8 KPI 14 RFM Segmentation.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/notebooks/Week8%20KPI%2014%20RFM%20Segmentation.ipynb)
+- [Week8 KPI 15 Historical Customer Value.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/notebooks/Week8%20KPI%2015%20Historical%20Customer%20Value.ipynb)
+- [Week8 KPI 16 Customer Payment Risk.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/notebooks/Week8%20KPI%2016%20Customer%20Payment%20Risk.ipynb)
+- [Week8 KPI 17 Churn by Payment Behavior.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-08/notebooks/Week8%20KPI%2017%20Churn%20by%20Payment%20Behavior.ipynb)
+
+The Week 8 results add a ninth strand: customer value is spread across many customers (KPI 15), customers do not differ in how they pay beyond what the due period and chance explain (KPI 16), and going quiet is not linked to paying late or leaving invoices unpaid (KPI 17).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -175,6 +197,7 @@ The Week 7 results add an eighth strand: the suppliers keep their promised deliv
 - Warehouse size (KPI 12) is read from text such as "45230 sqft" and, like the staff numbers used in KPI 11, is one current value per branch, so the same size is used for every past year. The size of sets and cartridges cannot be confirmed from the data, so the volume view of the stock is a comparison only.
 - Excess stock (KPI 10) is measured on the order-line stock with needed stock set at 3 months of sales per product and branch, and the ledger-based stock and five other rules are shown as tests. In 2025, 135 of the 1,586 counted order lines have no stock ledger row and 15 ledger rows belong to cancelled orders, which is why the ledger is not used as the stock source.
 - Supplier lead time and reliability (KPI 13) use the 21,630 Received purchase orders only, because Cancelled orders have no received date. Real lead time and lateness are worked out from the order, promised and received dates. The promised days in the suppliers table are supported by the orders (the real wait is 0.49 to 0.55 days longer for every supplier), but the reliability score is not (suppliers scored 3, 4 and 5 are late equally often), so it is not used as a measure.
+- Customer analytics (KPIs 14 to 17) uses the snapshot date 1 Jan 2025, the day after the last order. The order data ends on 31 Dec 2024 and the quiet count rises with every later date (67 at 1 Jan 2025, 125 at 1 Feb 2025 and 201 at 1 Mar 2025). Customer money in KPIs 14 and 15 is counted before GST from Delivered orders. The payment KPIs (16 and 17) use the 17,640 invoices whose invoice ID is not repeated and the 18,840 payments that do not point to a repeated invoice ID, with money including GST, so the 393 invoices left out (about 2.2% of the money) are not in the unpaid money. The silence ratio is never rounded before counting, because a rounded gap lost one customer.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
