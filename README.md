@@ -40,7 +40,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 6 | Excess stock, warehouse throughput and warehouse space (KPIs 10, 11 and 12) | Done |
 | 7 | Supplier lead time and reliability (KPI 13) | Done |
 | 8 | Customer analytics: RFM segmentation, historical customer value, customer payment risk and churn by payment behavior (KPIs 14, 15, 16 and 17) | Done |
-| 9 to 12 | Forecasting; risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 9 | Forecasting and reorder points: product demand forecast and stockout risk (KPIs 18 and 19) | Done |
+| 10 to 12 | Risk and anomaly detection; dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -186,6 +187,23 @@ Notebooks:
 
 The Week 8 results add a ninth strand: customer value is spread across many customers (KPI 15), customers do not differ in how they pay beyond what the due period and chance explain (KPI 16), and going quiet is not linked to paying late or leaving invoices unpaid (KPI 17).
 
+## Week 9: Forecasting and reorder points
+
+Week 9 continued Phase 3 (supplier, customer and predictive analytics). KPI 18 forecast how much of each product will sell in each branch, and KPI 19 used that demand with the real supplier waiting times to work out when each product should be reordered and whether any product is close to a stockout.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 18 | Product Demand Forecast | The last 12 months (2024) were hidden and forecast from 2019 to 2023, using each product-branch pair's average month. The forecast total was 207,016 units against 199,858 sold. The gap is 5.18% per product over the year, 11.06% per pair over the year, 18.7% per pair over a quarter and 32.2% per pair per month, so the forecast is reliable per product over a year and weak per pair per month. 26 of 30 products are within 10% and none is 20% or more off; P019, P005, P012 and P010 are more than 10% off, all forecast too high. The 2025 forecast is 205,823 units, about 3.0% above 2024. | [KPI 18](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-09/docs/KPI%2018%20Product%20Demand%20Forecast.md) |
+| 19 | Stockout Risk and Reorder Point | No product-branch pair is near a stockout. Reorder points run from 89.9 to 144.5 units (average 116.2), while stock runs from 98,642 to 132,967 units, so every pair holds at least 745.7 times its reorder point. The closest pair (P019 in Kolkata) would need 74.8 years of average sales to reach it. The answer holds at 90% and 99% service levels, with every wait at 35 days, and against the most any pair ever sold in 35 days (383 units). The stored reorder levels are below the calculated ones in 175 of 180 pairs, and the stored lead times differ from the real waits by more than 1 day in 27 of 30 products. | [KPI 19](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-09/docs/KPI%2019%20Stockout%20Risk%20and%20Reorder%20Point.md) |
+
+Sprint notes: [sprint-09-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-09/sprint_notes/sprint-09-notes.md)
+
+Notebooks:
+- [Week9 KPI 18 Product Demand Forecast.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-09/notebooks/Week9%20KPI%2018%20Product%20Demand%20Forecast.ipynb)
+- [Week9 KPI 19 Stockout Risk and Reorder Point.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-09/notebooks/Week9%20KPI%2019%20Stockout%20Risk%20and%20Reorder%20Point.ipynb)
+
+The Week 9 results add a tenth strand: demand can be forecast reliably per product over a year but not per pair per month (KPI 18), and stock is far above every reorder point, at least 745.7 times (KPI 19).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -198,6 +216,7 @@ The Week 8 results add a ninth strand: customer value is spread across many cust
 - Excess stock (KPI 10) is measured on the order-line stock with needed stock set at 3 months of sales per product and branch, and the ledger-based stock and five other rules are shown as tests. In 2025, 135 of the 1,586 counted order lines have no stock ledger row and 15 ledger rows belong to cancelled orders, which is why the ledger is not used as the stock source.
 - Supplier lead time and reliability (KPI 13) use the 21,630 Received purchase orders only, because Cancelled orders have no received date. Real lead time and lateness are worked out from the order, promised and received dates. The promised days in the suppliers table are supported by the orders (the real wait is 0.49 to 0.55 days longer for every supplier), but the reliability score is not (suppliers scored 3, 4 and 5 are late equally often), so it is not used as a measure.
 - Customer analytics (KPIs 14 to 17) uses the snapshot date 1 Jan 2025, the day after the last order. The order data ends on 31 Dec 2024 and the quiet count rises with every later date (67 at 1 Jan 2025, 125 at 1 Feb 2025 and 201 at 1 Mar 2025). Customer money in KPIs 14 and 15 is counted before GST from Delivered orders. The payment KPIs (16 and 17) use the 17,640 invoices whose invoice ID is not repeated and the 18,840 payments that do not point to a repeated invoice ID, with money including GST, so the 393 invoices left out (about 2.2% of the money) are not in the unpaid money. The silence ratio is never rounded before counting, because a rounded gap lost one customer.
+- The demand forecast and reorder points (KPIs 18 and 19) use Delivered sales lines for demand and Received purchase lines for waiting times, with the stock from KPI 8. Every product comes from all 8 suppliers, so each product uses its own real waiting time. The reorder levels and safety stocks stored in the inventory table and the lead times stored in the products table are not used, because they differ from the real data (175 of 180 pairs; 27 of 30 products). The 2025 forecast cannot be tested until 2025 happens; the same method was 3.6% too high on 2024.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
