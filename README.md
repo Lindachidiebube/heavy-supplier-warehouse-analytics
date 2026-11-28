@@ -41,7 +41,8 @@ Warehouses and supply-chain teams often operate reactively, relying on manual re
 | 7 | Supplier lead time and reliability (KPI 13) | Done |
 | 8 | Customer analytics: RFM segmentation, historical customer value, customer payment risk and churn by payment behavior (KPIs 14, 15, 16 and 17) | Done |
 | 9 | Forecasting and reorder points: product demand forecast and stockout risk (KPIs 18 and 19) | Done |
-| 10 to 12 | Risk and anomaly detection; dashboards; strategy and final presentation | Planned |
+| 10 | Risk and anomaly detection: inventory movement anomalies, stock shrinkage and operational risk score (KPIs 20, 21 and 22) | Done |
+| 11 to 12 | Dashboards; strategy and final presentation | Planned |
 
 ## Week 1: Data exploration
 
@@ -204,6 +205,25 @@ Notebooks:
 
 The Week 9 results add a tenth strand: demand can be forecast reliably per product over a year but not per pair per month (KPI 18), and stock is far above every reorder point, at least 745.7 times (KPI 19).
 
+## Week 10: Risk, anomaly and control
+
+Week 10 started Phase 4 (risk, anomaly and control) and completed the roadmap of 22 KPIs. KPI 20 looked for unusual rows in the stock ledger, KPI 21 measured the loss that stock adjustments record, and KPI 22 combined four risk signals into one score for each branch.
+
+| # | KPI | Headline result | Write-up |
+|---|---|---|---|
+| 20 | Inventory Movement Anomaly Detection | 8,338 of the 237,230 stock ledger rows (3.51%) are flagged as unusual: 2,817 belong to cancelled orders and 5,521 hold fewer units than the order lines they come from. Size cannot flag a row, because every quantity sits inside a fixed range and is spread evenly. No branch (p-value 0.1089) or product (p-value 0.1897) has a flagged share beyond chance, and purchases and sales are flagged at the same rate (3.55%). The yearly share stays between 3.50% and 3.65% in 2020 to 2024 (p-value 0.6997). | [KPI 20](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/docs/KPI%2020%20Inventory%20Movement%20Anomaly%20Detection.md) |
+| 21 | Stock Shrinkage Rate | Adjustments subtract 33,464 units out of 21,522,627 units handled, a recorded loss rate of 0.1555%, and add back 33,526 units, so the net is +62 units. Branches run from 0.1378% (Pune) to 0.1752% (Kolkata), and no branch (p-value 0.5024), product (p-value 0.2496) or year (p-value 0.8518) differs beyond chance. The data holds no physical stock count, so the units missing from the ledger (a net gap of 1,879,221 units) are kept apart and are not called shrinkage. | [KPI 21](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/docs/KPI%2021%20Stock%20Shrinkage%20Rate.md) |
+| 22 | Operational Risk Score | Four risk signals (late payments, years of stock cover, flagged ledger rows and recorded loss) are combined into one score per branch: Hyderabad 105.1, Pune 101.5, Chennai 100.0, Delhi 98.7, Kolkata 98.6 and Ahmedabad 97.5. The late payment rate and the years of cover differ between branches beyond chance (p-value below 0.000001); the flagged share and the loss rate do not. The ranking is not stable: Hyderabad ranks first in 59.8% of 10,000 random weight sets, so the risk profile of each branch matters more than its rank. | [KPI 22](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/docs/KPI%2022%20Operational%20Risk%20Score.md) |
+
+Sprint notes: [sprint-10-notes.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/sprint_notes/sprint-10-notes.md)
+
+Notebooks:
+- [Week10 KPI 20 Inventory Movement Anomaly Detection.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/notebooks/Week10%20KPI%2020%20Inventory%20Movement%20Anomaly%20Detection.ipynb)
+- [Week10 KPI 21 Stock Shrinkage Rate.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/notebooks/Week10%20KPI%2021%20Stock%20Shrinkage%20Rate.ipynb)
+- [Week10 KPI 22 Operational Risk Score.ipynb](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-10/notebooks/Week10%20KPI%2022%20Operational%20Risk%20Score.ipynb)
+
+The Week 10 results add another strand: about 3.5% of the ledger rows break the link to the order records (KPI 20), recorded adjustments are small and almost cancel out (KPI 21), and the branch risk score puts Hyderabad first but the rank depends on the weights, so the risk profile of each branch is what to read (KPI 22).
+
 ## Data quality decisions
 
 - Invoice and payment IDs contain genuine collisions (unrelated records sharing one ID). Rows affected are excluded only where a payments-to-invoices join is needed (KPI 4), and a bias check confirmed this does not distort the results.
@@ -217,6 +237,7 @@ The Week 9 results add a tenth strand: demand can be forecast reliably per produ
 - Supplier lead time and reliability (KPI 13) use the 21,630 Received purchase orders only, because Cancelled orders have no received date. Real lead time and lateness are worked out from the order, promised and received dates. The promised days in the suppliers table are supported by the orders (the real wait is 0.49 to 0.55 days longer for every supplier), but the reliability score is not (suppliers scored 3, 4 and 5 are late equally often), so it is not used as a measure.
 - Customer analytics (KPIs 14 to 17) uses the snapshot date 1 Jan 2025, the day after the last order. The order data ends on 31 Dec 2024 and the quiet count rises with every later date (67 at 1 Jan 2025, 125 at 1 Feb 2025 and 201 at 1 Mar 2025). Customer money in KPIs 14 and 15 is counted before GST from Delivered orders. The payment KPIs (16 and 17) use the 17,640 invoices whose invoice ID is not repeated and the 18,840 payments that do not point to a repeated invoice ID, with money including GST, so the 393 invoices left out (about 2.2% of the money) are not in the unpaid money. The silence ratio is never rounded before counting, because a rounded gap lost one customer.
 - The demand forecast and reorder points (KPIs 18 and 19) use Delivered sales lines for demand and Received purchase lines for waiting times, with the stock from KPI 8. Every product comes from all 8 suppliers, so each product uses its own real waiting time. The reorder levels and safety stocks stored in the inventory table and the lead times stored in the products table are not used, because they differ from the real data (175 of 180 pairs; 27 of 30 products). The 2025 forecast cannot be tested until 2025 happens; the same method was 3.6% too high on 2024.
+- Ledger rows that belong to cancelled orders (2,817) are flagged and kept. The units missing from the ledger (a net gap of 1,879,221 units) are reported as a records gap and not as shrinkage, because the data holds no physical stock count.
 - The full list of decisions is in [data-cleaning-log.md](https://github.com/Lindachidiebube/heavy-supplier-warehouse-analytics/blob/main/week-03/docs/data-cleaning-log.md).
 
 ## Running the notebooks
